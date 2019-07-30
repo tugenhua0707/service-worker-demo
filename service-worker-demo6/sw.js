@@ -71,7 +71,7 @@ var createStoreUrl = function(storeDetails) {
 };
 
 var syncStores = function() {
-  return getStore("idx_status", "Sending").then(function(reservations) {
+  return getStore().then(function(reservations) {
     console.log(reservations);
     return Promise.all(
       reservations.map(function(reservation){
@@ -79,7 +79,9 @@ var syncStores = function() {
         return fetch(reservationUrl).then(function(response) {
           return response.json();
         }).then(function(newResponse) {
-          return updateInObjectStore("store", 1, newResponse);
+          return updateInObjectStore("store", 1, newResponse).then(function(){
+
+          })
         })
       })
     )

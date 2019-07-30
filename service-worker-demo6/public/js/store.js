@@ -1,5 +1,5 @@
 
-var DB_VERSION = 5;
+var DB_VERSION = 6;
 var DB_NAME = 'store-data2';
 
 var openDataBase = function() {
@@ -42,7 +42,9 @@ var openDataBase = function() {
  @param {transactionMode} 事务模式 readOnly 只读，readwrite 可读可写
 */
 var openObjectStore = function(db, storeName, transactionMode) {
-  return db.transaction(storeName, transactionMode).objectStore(storeName);
+  return db
+    .transaction(storeName, transactionMode)
+    .objectStore(storeName);
 };
 
 var getStore = function (indexName, indexValue) {
@@ -54,8 +56,6 @@ var getStore = function (indexName, indexValue) {
       var cursor;
       if (indexName && indexValue) {
         cursor = objectStore.index(indexName).openCursor(indexValue);
-        console.log(cursor);
-        console.log('------');
       } else {
         cursor = objectStore.openCursor();
       }
@@ -69,7 +69,7 @@ var getStore = function (indexName, indexValue) {
           if (datas.length > 0) {
             resolve(datas);
           } else {
-            getDataFromServer().then(function(d) {
+            getDataFromServer().then(function(datas) {
               openDataBase().then(function(db) {
                 var objectStore = openObjectStore(db, "store", "readwrite");
                 for (let i = 0; i < datas.length; i++) {
@@ -114,22 +114,20 @@ var addToObjectStore = function(storeName, object) {
 };
 
 var updateInObjectStore = function(storeName, id, object) {
-  console.log(object);
-  console.log('object');
   return new Promise(function(resolve, reject) {
     openDataBase().then(function(db) {
       openObjectStore(db, storeName, "readwrite").openCursor().onsuccess = function(event) {
         var cursor = event.target.result;
         if (!cursor) {
-          reject("store-data not found");
+          reject("store-data2 not found in object store");
         }
-        if (cursor && cursor.value.id === id) {
-          cursor.put(object).onsuccess = resolve;
+        if (cursor.value.id === id) {
+          cursor.update(object).onsuccess = resolve;
           return;
         }
-        cursor && cursor.continue();
+        cursor.continue();
       }
-    }).catch(function(){
+    }).catch(function(error){
       reject(error);
     })
   });

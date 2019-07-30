@@ -4,6 +4,7 @@ import $ from 'jquery';
 
 $(function() {
   function renderHTMLFunc(obj) {
+    console.log('渲染html元素')
     console.log(obj);
   }
   function updateDisplay(d) {
@@ -33,13 +34,14 @@ $(function() {
     }
   };
   $("#submit").click(function(e) {
-    addStore(3, 'longen1', '111');
+    addStore(1, 'kongzhi111', '28');
   });
+  /*
   $("#update").click(function(e) {
     $.getJSON("http://localhost:8081/public/json/index.json", {id: 1}, function(data) {
       updateInObjectStore("store", 1, data);
       updateDisplay(data);
     });
   });
-  
+  */
 });
